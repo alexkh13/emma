@@ -12,7 +12,7 @@ const EventEmitter = require('events');
 
 const emitter = new EventEmitter();
 
-var sendNotification = function() {
+var sendNotification = async function() {
   if (context.ref) {
     context.text = context.text + " " + BARK_TEXT;
     return context.ref.set({
@@ -30,7 +30,7 @@ var sendNotification = function() {
   } 
   else {
     context.text = BARK_TEXT;
-    return admin.firestore().collection('hubs/emma/messages').add({
+    await admin.firestore().collection('hubs/emma/messages').add({
       text: context.text,
       createTime: admin.firestore.FieldValue.serverTimestamp(),
     }).then((ref) => {
@@ -40,13 +40,12 @@ var sendNotification = function() {
     .catch((err) => {
       console.error("hey error", err);
     })
-    .finally(() => {
-      setTimeout(() => {
-        context.ref = null;
-        context.text = "";
-        emitter.emit('reset');
-      }, AGGR_TIME * 1000)
-    });
+    
+    setTimeout(() => {
+      context.ref = null;
+      context.text = "";
+      emitter.emit('reset');
+    }, AGGR_TIME * 1000);
   }
 };
 
