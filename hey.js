@@ -15,7 +15,7 @@ const emitter = new EventEmitter();
 var sendNotification = function() {
   if (context.ref) {
     context.text = context.text + " " + BARK_TEXT;
-    context.ref.set({
+    return context.ref.set({
       text: context.text,
       updateTime: admin.firestore.FieldValue.serverTimestamp()
     }, {
@@ -30,7 +30,7 @@ var sendNotification = function() {
   } 
   else {
     context.text = BARK_TEXT;
-    admin.firestore().collection('hubs/emma/messages').add({
+    return admin.firestore().collection('hubs/emma/messages').add({
       text: context.text,
       createTime: admin.firestore.FieldValue.serverTimestamp(),
     }).then((ref) => {
